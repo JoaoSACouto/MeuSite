@@ -32,11 +32,17 @@
         <div class="max-w-4xl mx-auto py-10 px-4">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h1>
             <!-- Search -->
-            <div class="mb-6">
-                <input type="text" id="searchInput" placeholder="Search FAQs..." x-webkit-speech
+            <div class="mb-6 flex items-center space-x-2">
+                <input type="text" id="searchInput" placeholder="Search FAQs..."
                     class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     oninput="filterFAQs()" />
+                <button id="voiceSearchBtn" onclick="startVoiceSearch()"
+                    class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md focus:outline-none"
+                    aria-label="Start voice search">
+                    🎤
+                </button>
             </div>
+
             <!-- FAQ List -->
             <div id="faqList" class="space-y-4">
                 <!-- FAQ 1 -->
@@ -67,7 +73,8 @@
                         </svg>
                     </button>
                     <div class="mt-2 hidden text-gray-700">
-                        Trickster is a great option for penance brand but the investment for it to work will be much higher,
+                        Trickster is a great option for penance brand but the investment for it to work will be much
+                        higher,
                         Inquisitor is a lot cheaper to start and can do the 2 risk abyss strat without any issues.
                     </div>
                 </div>
@@ -102,6 +109,35 @@
             });
         }
     </script>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+
+        function startVoiceSearch() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('Sorry, your browser does not support speech recognition.');
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript;
+                filterFAQs();
+            };
+
+            recognition.onerror = function (event) {
+                console.error('Speech recognition error', event.error);
+                alert('Error during speech recognition: ' + event.error);
+            };
+        }
+    </script>
+
 </body>
 
 </html>
